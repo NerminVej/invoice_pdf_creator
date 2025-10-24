@@ -30,7 +30,7 @@ public class InvoiceService {
 
     public Invoice findByIdOrThrow(Long id) {
         return repo.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Customer not found: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("Invoice not found: " + id));
     }
 
     @Transactional
@@ -77,4 +77,34 @@ public class InvoiceService {
 
         return inv;
     }
+
+    @Transactional
+    public Invoice update(Long id, Invoice cmd) {
+        Invoice existing = findByIdOrThrow(id);
+
+        existing.setInvoiceDate(cmd.getInvoiceDate());
+        existing.setServiceDate(cmd.getServiceDate());
+        existing.setEntryText(cmd.getEntryText());
+
+        existing.setBillCompanyName(cmd.getBillCompanyName());
+        existing.setBillPhoneNumber(cmd.getBillPhoneNumber());
+        existing.setBillLine1(cmd.getBillLine1());
+        existing.setBillLine2(cmd.getBillLine2());
+        existing.setBillPostalCode(cmd.getBillPostalCode());
+        existing.setBillCity(cmd.getBillCity());
+        existing.setBillCountryCode(cmd.getBillCountryCode());
+
+        existing.getItems().clear();
+        if (cmd.getItems() != null) {
+            for (int i = 0; i < cmd.getItems().size(); i++) {
+                var item = cmd.getItems().get(i);
+                item.setInvoice(existing);
+                item.setPosition(i + 1);
+                existing.getItems().add(item);
+            }
+        }
+
+        return repo.save(existing);
+    }
+
 }

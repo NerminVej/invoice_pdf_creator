@@ -29,7 +29,7 @@ public class InvoiceController {
     @GetMapping("/select-customer")
     public String selectCustomer(Model model) {
         model.addAttribute("customers", customers.findAll());
-        return "invoices/select-customer"; // templates/invoices/select-customer.html
+        return "invoices/select-customer";
     }
 
     @GetMapping
@@ -53,6 +53,19 @@ public class InvoiceController {
     public String show(@PathVariable Long id, Model model) {
         model.addAttribute("invoice", invoices.findByIdOrThrow(id));
         return "invoices/invoice-detail";
+    }
+
+    @GetMapping("/{id}/edit")
+    public String edit(@PathVariable Long id, Model model) {
+        model.addAttribute("invoice", invoices.findByIdOrThrow(id));
+        model.addAttribute("customers", customers.findAll());
+        return "invoices/invoice-form";
+    }
+
+    @PostMapping("/{id}")
+    public String update(@PathVariable Long id, @ModelAttribute("invoice") Invoice invoice) {
+        Invoice saved = invoices.update(id, invoice);
+        return "redirect:/invoices/" + saved.getId() + "?updated=1";
     }
 
     @PostMapping
