@@ -53,25 +53,32 @@
     .cols { width: 100%; border-collapse: separate; border-spacing: 16px 0; }
     .cols td { vertical-align: top; width: 50%; }
 
+    /* ---------- Items table ---------- */
     table.items {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;         
-  }
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
     table.items thead th {
-      font-weight: 600; text-align: left; font-size: 11px; color: #334155;
+      font-weight: 600; font-size: 11px; color: #334155;
       border-bottom: 1px solid #e5e7eb; padding: 8px 6px;
     }
     table.items tbody td {
-      padding: 8px 6px; border-bottom: 1px solid #f1f5f9;
-      vertical-align: top;
+      padding: 8px 6px; border-bottom: 1px solid #f1f5f9; vertical-align: top;
     }
-    .num {
-    text-align: right;
-    white-space: nowrap;          
-    font-variant-numeric: tabular-nums;         
-    font-feature-settings: "tnum" 1, "lnum" 1;  
-  }
+    /* Description cell: wrap words, but don't push numeric columns */
+    .desc {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    /* Numeric columns: right aligned, fixed-width glyphs, no wrap */
+    .num, thead .num {
+      text-align: right;
+      white-space: nowrap;
+      font-family: "Courier New", Courier, monospace; /* guarantees equal-width digits */
+    }
+    /* If your renderer supports OpenType features, this improves Arial as fallback */
+    .num { font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "lnum" 1; }
 
     /* --------- Totals --------- */
     .totals { width: 100%; }
@@ -143,22 +150,24 @@
 
   <div class="mb-4">
     <table class="items">
+
+
       <thead>
         <tr>
-          <th style="width: 8%;">Pos</th>
+          <th>Pos</th>
           <th>Description</th>
-          <th class="num" style="width: 14%;">Qty</th>
-          <th class="num" style="width: 18%;">Unit (net)</th>
-          <th class="num" style="width: 20%;">Line Total</th>
+          <th class="num">Qty</th>
+          <th class="num">Unit (net)</th>
+          <th class="num">Line Total</th>
         </tr>
       </thead>
       <tbody>
         <tr th:each="it : ${invoice.items}">
           <td th:text="${it.position}">1</td>
-          <td>
+          <td class="desc">
             <div th:text="${it.description}">Consulting hours</div>
           </td>
-          <td class="num" th:text="${it.quantity}">2.0</td>
+          <td class="num" th:text="${it.quantity}">2.000</td>
           <td class="num"
               th:text="${#numbers.formatDecimal(it.unitNetAmount, 1, 'COMMA', 2, 'POINT')}">100.00</td>
           <td class="num"
@@ -182,16 +191,6 @@
           <td class="amount"
               th:text="${#numbers.formatDecimal(invoice.totalNet, 1, 'COMMA', 2, 'POINT')}">0.00</td>
         </tr>
-        <!--
-        <tr>
-          <td class="label">VAT (19%):</td>
-          <td class="amount">…</td>
-        </tr>
-        <tr>
-          <td class="label">Total (gross):</td>
-          <td class="amount">…</td>
-        </tr>
-        -->
       </table>
     </div>
   </div>
