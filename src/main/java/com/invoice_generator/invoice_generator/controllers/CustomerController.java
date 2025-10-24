@@ -4,6 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.invoice_generator.invoice_generator.models.Customer;
 import com.invoice_generator.invoice_generator.services.CustomerService;
@@ -39,6 +40,18 @@ public class CustomerController {
         model.addAttribute("customer", existing);
         model.addAttribute("isEdit", true);
         return "customer-form";
+    }
+
+    @PostMapping("/{id}/delete")
+    public String delete(@PathVariable Long id, RedirectAttributes ra) {
+        try {
+            customerService.delete(id);
+            ra.addFlashAttribute("toast", "Customer deleted.");
+            return "redirect:/customers?deleted=1";
+        } catch (IllegalStateException ex) {
+            ra.addFlashAttribute("error", ex.getMessage());
+            return "redirect:/customers?deleteError=1";
+        }
     }
 
     @PostMapping

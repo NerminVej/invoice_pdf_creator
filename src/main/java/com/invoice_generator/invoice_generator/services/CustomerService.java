@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import com.invoice_generator.invoice_generator.models.Customer;
 import com.invoice_generator.invoice_generator.repositories.CustomerRepository;
 
+import jakarta.transaction.Transactional;
+
 import java.util.List;
 
 @Service
@@ -26,6 +28,12 @@ public class CustomerService {
     public Customer findByIdOrThrow(Long id) {
         return repo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Customer not found: " + id));
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        Customer cus = findByIdOrThrow(id);
+        repo.delete(cus);
     }
 
     public Customer update(Long id, Customer fromForm) {

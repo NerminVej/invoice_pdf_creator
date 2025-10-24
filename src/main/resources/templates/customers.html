@@ -9,6 +9,15 @@
   <div th:replace="~{fragments/navbar :: navbar}"></div>
 
   <main class="max-w-6xl mx-auto p-6">
+
+    <!-- success / error banners -->
+    <div th:if="${param.deleted}" class="mb-4 rounded-lg bg-green-50 text-green-800 px-4 py-3">
+      <span>Customer deleted.</span>
+    </div>
+    <div th:if="${param.deleteError}" class="mb-4 rounded-lg bg-red-50 text-red-800 px-4 py-3">
+      <span th:text="${error != null ? error : 'Could not delete this customer.'}"></span>
+    </div>
+
     <header class="flex items-center justify-between mb-6">
       <div>
         <h1 class="text-2xl font-semibold tracking-tight">Customers</h1>
@@ -56,8 +65,10 @@
                 <span th:text="${c.address != null ? c.address.city : ''}">City</span>
                 <span th:text="${c.address != null ? '(' + c.address.countryCode + ')' : ''}">(DE)</span>
               </td>
+
               <td class="px-4 py-3">
                 <div class="flex items-center justify-end gap-2">
+                  <!-- Edit -->
                   <a th:href="@{/customers/{id}/edit(id=${c.id})}"
                      class="inline-flex items-center px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50"
                      title="Edit">
@@ -67,6 +78,22 @@
                       <path d="M11 4l5 5"/>
                     </svg>
                   </a>
+
+                  <!-- Delete: POST with CSRF -->
+                  <form th:action="@{/customers/{id}/delete(id=${c.id})}" method="post"
+                        onsubmit="return confirm('Delete this customer? This cannot be undone.');">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <button type="submit"
+                            class="inline-flex items-center px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50"
+                            title="Delete">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                           fill="currentColor" class="w-4 h-4">
+                        <path fill-rule="evenodd"
+                              d="M9 2a1 1 0 00-.894.553L7.382 4H4.75a.75.75 0 000 1.5h.633l.74 9.255A2.25 2.25 0 008.366 17h3.268a2.25 2.25 0 002.243-2.245L14.617 5.5h.633a.75.75 0 000-1.5h-2.632l-.724-1.447A1 1 0 0010.999 2H9zM8.5 7a.75.75 0 011.5 0v6a.75.75 0 01-1.5 0V7zm4 0a.75.75 0 011.5 0v6a.75.75 0 01-1.5 0V7z"
+                              clip-rule="evenodd"/>
+                      </svg>
+                    </button>
+                  </form>
                 </div>
               </td>
             </tr>
