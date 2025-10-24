@@ -18,14 +18,13 @@ public class Customer {
     private String companyName;
 
     @Embedded
-    @Valid // Ensure nested Address is validated too
+    @Valid
     private Address address = new Address();
 
     @Size(max = 50)
     @Pattern(regexp = "^[+\\d][\\d\\s().-]{3,}$", message = "Please enter a valid phone number")
     private String phoneNumber;
 
-    // getters/setters
     public Long getId() {
         return id;
     }

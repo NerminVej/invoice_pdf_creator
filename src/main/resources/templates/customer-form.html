@@ -1,39 +1,100 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Select Customer</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-  </head>
-<body>
+<head>
+  <meta charset="UTF-8" />
+  <title th:text="${isEdit} ? 'Edit Customer' : 'Create Customer'">Create Customer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-900">
   <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<h1>Create Customer</h1>
+  <main class="max-w-3xl mx-auto p-6">
+    <header class="mb-6">
+      <h1 class="text-2xl font-semibold tracking-tight"
+          th:text="${isEdit} ? 'Edit Customer' : 'Create Customer'">Create Customer</h1>
+      <p class="text-sm text-gray-600 mt-1">Enter company and address details, then save.</p>
+    </header>
 
-<form th:action="@{/customers}" th:object="${customer}" method="post">
-  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+    <form th:action="@{/customers}" th:object="${customer}" method="post"
+          class="space-y-6">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
-  <label>Company</label>
-  <input th:field="*{companyName}" required />
+      <section class="bg-white rounded-xl shadow-sm ring-1 ring-gray-200 p-5">
+        <h2 class="text-lg font-medium mb-4">Company</h2>
 
-  <h3>Address</h3>
-  <input placeholder="Line 1" th:field="*{address.line1}" required />
-  <input placeholder="Line 2" th:field="*{address.line2}" />
-  <input placeholder="ZIP/PLZ" th:field="*{address.postalCode}" required />
-  <input placeholder="City" th:field="*{address.city}" required />
-  <select th:field="*{address.countryCode}" required>
-    <option value="">-- Country --</option>
-    <option value="DE">Germany</option>
-    <option value="US">United States</option>
-    <option value="GB">United Kingdom</option>
-  </select>
+        <div class="grid grid-cols-1 gap-4">
+          <div>
+            <label for="companyName" class="block text-sm font-medium text-gray-700 mb-1">Company Name <span class="text-red-600">*</span></label>
+            <input id="companyName" th:field="*{companyName}" required
+                   placeholder="e.g., Acme GmbH"
+                   class="w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+          </div>
 
-  <label>Phone</label>
-  <input th:field="*{phoneNumber}" />
+          <div>
+            <label for="phoneNumber" class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+            <input id="phoneNumber" th:field="*{phoneNumber}" required
+                   placeholder="+49 ..."
+                   class="w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+          </div>
+        </div>
+      </section>
 
-  <button type="submit" th:text="${isEdit} ? 'Update' : 'Save'">Save</button>
+      <section class="bg-white rounded-xl shadow-sm ring-1 ring-gray-200 p-5">
+        <h2 class="text-lg font-medium mb-4">Address</h2>
 
-  <a th:href="@{/customers}">Cancel</a>
-</form>
+        <div class="grid grid-cols-1 gap-4">
+          <div>
+            <label for="line1" class="block text-sm font-medium text-gray-700 mb-1">Address Line 1 <span class="text-red-600">*</span></label>
+            <input id="line1" th:field="*{address.line1}" required
+                   placeholder="Street & number"
+                   class="w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+          </div>
+
+          <div>
+            <label for="line2" class="block text-sm font-medium text-gray-700 mb-1">Address Line 2</label>
+            <input id="line2" th:field="*{address.line2}"
+                   placeholder="Apt / Suite / Floor (optional)"
+                   class="w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label for="postalCode" class="block text-sm font-medium text-gray-700 mb-1">ZIP / PLZ <span class="text-red-600">*</span></label>
+              <input id="postalCode" th:field="*{address.postalCode}" required
+                     placeholder="e.g., 10115"
+                     class="w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+            </div>
+            <div>
+              <label for="city" class="block text-sm font-medium text-gray-700 mb-1">City <span class="text-red-600">*</span></label>
+              <input id="city" th:field="*{address.city}" required
+                     placeholder="Berlin"
+                     class="w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+            </div>
+            <div>
+              <label for="countryCode" class="block text-sm font-medium text-gray-700 mb-1">Country <span class="text-red-600">*</span></label>
+              <select id="countryCode" th:field="*{address.countryCode}" required
+                      class="w-full rounded-lg border-gray-300 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                <option value="">-- Country --</option>
+                <option value="DE">Germany</option>
+                <option value="US">United States</option>
+                <option value="GB">United Kingdom</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="flex items-center justify-end gap-3">
+        <a th:href="@{/customers}"
+           class="inline-flex items-center px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50">
+          Cancel
+        </a>
+        <button type="submit"
+                class="inline-flex items-center px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600">
+          <span th:text="${isEdit} ? 'Update' : 'Save'">Save</span>
+        </button>
+      </section>
+    </form>
+  </main>
 </body>
 </html>

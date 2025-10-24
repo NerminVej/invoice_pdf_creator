@@ -1,5 +1,12 @@
 package com.invoice_generator.invoice_generator.controllers;
 
+import com.invoice_generator.invoice_generator.services.PdfService;
+import java.net.URL;
+import java.util.Map;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,10 +27,12 @@ public class InvoiceController {
 
     private final InvoiceService invoices;
     private final CustomerService customers;
+    private final PdfService pdfService;
 
-    public InvoiceController(InvoiceService invoices, CustomerService customers) {
+    public InvoiceController(InvoiceService invoices, CustomerService customers, PdfService pdfService) {
         this.invoices = invoices;
         this.customers = customers;
+        this.pdfService = pdfService;
     }
 
     @GetMapping("/select-customer")
@@ -72,6 +81,24 @@ public class InvoiceController {
     public String create(@ModelAttribute("invoice") Invoice invoice) {
         Invoice saved = invoices.save(invoice);
         return "redirect:/invoices/" + saved.getId() + "?saved=1";
+    }
+
+    @GetMapping("/{id}/print")
+    public ResponseEntity<byte[]> print(@PathVariable Long id) {
+        var inv = invoices.findByIdOrThrow(id);
+
+        byte[] pdf = pdfService.renderTemplateToPdf(
+                "invoices/invoice-pdf",
+                Map.of("invoice", inv),
+                "");
+
+        String filename = "Invoice-" + (inv.getInvoiceNumber() != null ? inv.getInvoiceNumber() : inv.getId()) + ".pdf";
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION,
+                        "inline; filename=\"" + filename + "\"")
+                .body(pdf);
     }
 
 }

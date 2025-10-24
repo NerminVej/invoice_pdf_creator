@@ -33,7 +33,6 @@ public class CustomerController {
         return "customer-form";
     }
 
-    // EDIT FORM
     @GetMapping("/{id}/edit")
     public String showEditForm(@PathVariable Long id, Model model) {
         Customer existing = customerService.findByIdOrThrow(id);
