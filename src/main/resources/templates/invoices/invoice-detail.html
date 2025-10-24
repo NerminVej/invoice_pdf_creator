@@ -1,0 +1,86 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>Invoice</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-900">
+  <div th:replace="~{fragments/navbar :: navbar}"></div>
+  <main class="max-w-5xl mx-auto p-6 space-y-4">
+    <div th:if="${param.saved}" class="rounded-lg bg-green-50 text-green-800 px-4 py-3">
+      Invoice saved successfully.
+    </div>
+
+    <header class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-semibold">Invoice
+          <span class="text-indigo-700" th:text="${invoice.invoiceNumber}">2025-000001</span>
+        </h1>
+        <p class="text-sm text-gray-600">
+          Service: <span th:text="${invoice.serviceDate}">2025-10-24</span> ·
+          Invoice: <span th:text="${invoice.invoiceDate}">2025-10-24</span>
+        </p>
+      </div>
+      <a th:href="@{/invoices/{id}/edit(id=${invoice.id})}"
+         class="inline-flex items-center px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50">
+        Edit
+      </a>
+    </header>
+
+    <section class="bg-white rounded-xl ring-1 ring-gray-200 p-5">
+      <h2 class="text-lg font-medium mb-3">Bill To</h2>
+      <div class="text-sm">
+        <div class="font-medium" th:text="${invoice.billCompanyName}">Acme GmbH</div>
+        <div th:text="${invoice.billLine1}">Street 1</div>
+        <div th:text="${invoice.billLine2}">Line 2</div>
+        <div>
+          <span th:text="${invoice.billPostalCode}">10115</span>
+          <span th:text="${invoice.billCity}">Berlin</span>
+          (<span th:text="${invoice.billCountryCode}">DE</span>)
+        </div>
+        <div th:text="${invoice.billPhoneNumber}">+49 …</div>
+      </div>
+    </section>
+
+    <section class="bg-white rounded-xl ring-1 ring-gray-200 p-5">
+      <h2 class="text-lg font-medium mb-3">Line Items</h2>
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="text-left px-3 py-2">Pos</th>
+              <th class="text-left px-3 py-2">Description</th>
+              <th class="text-right px-3 py-2">Qty</th>
+              <th class="text-right px-3 py-2">Unit (net)</th>
+              <th class="text-right px-3 py-2">Line total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="it : ${invoice.items}" class="border-t">
+              <td class="px-3 py-2" th:text="${it.position}">1</td>
+              <td class="px-3 py-2" th:text="${it.description}">Service</td>
+              <td class="px-3 py-2 text-right" th:text="${it.quantity}">1.00</td>
+              <td class="px-3 py-2 text-right" th:text="${it.unitNetAmount}">100.00</td>
+              <td class="px-3 py-2 text-right"
+                  th:text="${it.quantity != null && it.unitNetAmount != null ? it.quantity * it.unitNetAmount : 0}">
+                100.00
+              </td>
+            </tr>
+          </tbody>
+          <tfoot class="border-t">
+            <tr>
+              <td colspan="4" class="px-3 py-2 text-right font-medium">Total (net)</td>
+              <td class="px-3 py-2 text-right" th:text="${invoice.totalNet}">100.00</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+
+    <div>
+      <a th:href="@{/invoices/new}" class="text-indigo-600 hover:underline text-sm">Create another invoice</a>
+    </div>
+  </main>
+</body>
+</html>

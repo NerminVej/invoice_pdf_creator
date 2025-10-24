@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Invoice</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+      </head>
+    <body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+        <h1>Welcome!</h1>
+
+        <p>Click <a th:href="@{/hello}">here</a> to see a greeting.</p>
+    </body>
+</html>

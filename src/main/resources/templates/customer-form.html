@@ -1,0 +1,39 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Select Customer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+<body>
+  <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<h1>Create Customer</h1>
+
+<form th:action="@{/customers}" th:object="${customer}" method="post">
+  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+  <label>Company</label>
+  <input th:field="*{companyName}" required />
+
+  <h3>Address</h3>
+  <input placeholder="Line 1" th:field="*{address.line1}" required />
+  <input placeholder="Line 2" th:field="*{address.line2}" />
+  <input placeholder="ZIP/PLZ" th:field="*{address.postalCode}" required />
+  <input placeholder="City" th:field="*{address.city}" required />
+  <select th:field="*{address.countryCode}" required>
+    <option value="">-- Country --</option>
+    <option value="DE">Germany</option>
+    <option value="US">United States</option>
+    <option value="GB">United Kingdom</option>
+  </select>
+
+  <label>Phone</label>
+  <input th:field="*{phoneNumber}" />
+
+  <button type="submit" th:text="${isEdit} ? 'Update' : 'Save'">Save</button>
+
+  <a th:href="@{/customers}">Cancel</a>
+</form>
+</body>
+</html>
