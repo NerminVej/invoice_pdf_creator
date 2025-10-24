@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.invoice_generator.invoice_generator.models.Invoice;
 import com.invoice_generator.invoice_generator.services.CustomerService;
@@ -81,6 +82,13 @@ public class InvoiceController {
     public String create(@ModelAttribute("invoice") Invoice invoice) {
         Invoice saved = invoices.save(invoice);
         return "redirect:/invoices/" + saved.getId() + "?saved=1";
+    }
+
+    @PostMapping("/{id}/delete")
+    public String delete(@PathVariable Long id, RedirectAttributes ra) {
+        invoices.delete(id);
+        ra.addFlashAttribute("toast", "Invoice deleted.");
+        return "redirect:/invoices?deleted=1";
     }
 
     @GetMapping("/{id}/print")

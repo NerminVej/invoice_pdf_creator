@@ -34,6 +34,12 @@ public class InvoiceService {
     }
 
     @Transactional
+    public void delete(Long id) {
+        Invoice inv = findByIdOrThrow(id);
+        repo.delete(inv);
+    }
+
+    @Transactional
     public Invoice save(Invoice inv) {
         if (inv.getInvoiceDate() == null) {
             inv.setInvoiceDate(LocalDate.now());
